@@ -5,8 +5,12 @@ public class App
     public static void main( String[] args )
     {
         //evaluateAndPrintResult("( 1 + 2 ) * 3");
-        Double d = ExpressionEvaluator.evaluate("( 3 + 6 ) * 4");
-        System.out.println(d);
+        try {
+            Double d = ExpressionEvaluator.evaluate("( 1 + ( 5 * 20 ) ) ");
+            System.out.println(d);
+        } catch (RuntimeException e) {
+            System.out.println("Doslo je do izuzetka pogresan unos!");
+        }
     }
     }
 

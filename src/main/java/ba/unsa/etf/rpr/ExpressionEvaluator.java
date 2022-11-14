@@ -1,17 +1,18 @@
 package ba.unsa.etf.rpr;
-import java.util.*;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
 
 public class ExpressionEvaluator {
-    public static Double evaluate(String s) {
-        try {
+    public static Double evaluate(String s)  throws RuntimeException{
             String[] str = s.split("\\s+");
             Queue<String> q = new LinkedList<>();
             q.addAll(Arrays.asList(str));
-            Stack<String> operands = new Stack<>();
+            Stack<String> operandi = new Stack<>();
             Stack<Double> values = new Stack<>();
-            // Double v = new Double(0);
-            while (!q.isEmpty()) {
+            while (!q.isEmpty()) { // Read token, push if operator.
                 String token = q.poll();
                 switch (token) {
                     case "(":
@@ -21,75 +22,47 @@ public class ExpressionEvaluator {
                     case "*":
                     case "/":
                     case "sqrt":
-                        operands.push(token);
+                        operandi.push(token);
                         break;
                     case ")":
-                        Double v = values.pop();
-                        if (!operands.isEmpty()) {
-                            String op = operands.pop();
-                            switch (op) {
-                                case "+":
-                                    v = values.pop() + v;
-                                    values.push(v);
-                                    break;
-                                case "-":
-                                    v = values.pop() - v;
-                                    values.push(v);
-                                    break;
-                                case "*":
-                                    v = values.pop() * v;
-                                    values.push(v);
-                                    break;
-                                case "/":
-                                    v = values.pop() / v;
-                                    values.push(v);
-                                    break;
-                                case "sqrt":
-                                    v = Math.sqrt(v);
-                                    values.push(v);
-                                    break;
-                                default:
-                                    break;
-                            }
-                            break;
-                        }
+                        values.push(evaluateOp(operandi, values));
+                        break;
                     default:
+                        // Token not operator or paren: push double value.
                         values.push(Double.parseDouble(token));
                         break;
                 }
             }
-            Double v = values.pop();
-            if (!operands.isEmpty()) {
-                String op = operands.pop();
-                switch (op) {
-                    case "+":
-                        v = values.pop() + v;
-                        values.push(v);
-                        break;
-                    case "-":
-                        v = values.pop() - v;
-                        values.push(v);
-                        break;
-                    case "*":
-                        v = values.pop() * v;
-                        values.push(v);
-                        break;
-                    case "/":
-                        v = values.pop() / v;
-                        values.push(v);
-                        break;
-                    case "sqrt":
-                        v = Math.sqrt(v);
-                        values.push(v);
-                        break;
-                    default:
-                        break;
-                }
-            }
-            return values.firstElement();
-        } catch (RuntimeException e) {
-            System.out.println("Doslo je do izuzetka, unos neispravan ");
-        }
-        return null;
+            return (evaluateOp(operandi, values));
+
     }
+
+    private static Double evaluateOp(Stack<String> operandi, Stack<Double> values) {
+        double v = values.pop();
+        if (!operandi.empty()) {
+            String op = operandi.pop();
+            switch (op) {
+                case "+":
+                    v = values.pop() + v;
+                    break;
+                case "-":
+                    v = values.pop() - v;
+                    break;
+                case "*":
+                    v = values.pop() * v;
+                    break;
+                case "/":
+                    v = values.pop() / v;
+                    break;
+                case "sqrt":
+                    v = Math.sqrt(v);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return v;
+    }
+
+
 }
